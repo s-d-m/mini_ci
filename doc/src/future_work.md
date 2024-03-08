@@ -104,11 +104,3 @@ automated thanks to the work put into providing html page with `title` everywher
 be nicer to not even have to think about it. Instead of monitoring a job status, a user could receive
 automatically receive an email with the job's result as soon as it becomes available.
 
-
-
-- desktop (terminal) application to push test request / view output
-
-- websocket to provide live output
-
-- with desktop app, cache database locally to view output of finished
-  tests without doing a network request
