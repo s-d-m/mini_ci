@@ -1,0 +1,9 @@
+# Performance self assessment
+
+
+In the end when started to measure performance (in a non-scientific way), the numbers I was getting was mostly below 10ms
+for the webserver to complete a request. The rest of the latency (i.e. firefox's loading time and network travel time) is
+not something on my control. Only updating a task was taking about 100ms and that isn't as much as a deal since it is
+done by a worker program, not a human.
+
+At that point, I'm satisfied enough with the performances, even though I have some ideas to make interaction faster.

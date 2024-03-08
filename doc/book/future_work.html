@@ -1,0 +1,308 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Future work - mini_ci</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">Introduction</a></li><li class="chapter-item expanded affix "><a href="constraints.html">Constraints of the project</a></li><li class="chapter-item expanded affix "><a href="architecture.html">Architecture</a></li><li class="chapter-item expanded affix "><a href="implementation_of_the_web_server.html">Implementation of the web server</a></li><li class="chapter-item expanded affix "><a href="implementation_of_the_workers.html">Implementation of the workers</a></li><li class="chapter-item expanded affix "><a href="security.html">Self security assessment</a></li><li class="chapter-item expanded affix "><a href="performance_assessment.html">Performance self assessment</a></li><li class="chapter-item expanded affix "><a href="future_work.html" class="active">Future work</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">mini_ci</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="future-work"><a class="header" href="#future-work">Future work</a></h1>
+<p>I'm not planning to continue this project as it fulfills all my goals already, and the point is to do as
+little yak-shaving as necessary. However beolow is a list of features or ideas I would implement if I had
+the control of time and could spend all the time I want on any thing I fancy.</p>
+<p>This page contains a list of features which I would be working on if I wanted to continue working on <code>mini_ci</code></p>
+<h2 id="live-test-output"><a class="header" href="#live-test-output">Live test output</a></h2>
+<p>One feature which was actually important and lead to some design decision was the ability for a user to see
+the output of a test live. This is the main reason why workers keep updating the database why output produced
+by tests instead of doing only one push when a test finished.</p>
+<p>At the moment, a user can only get a live output by keeping refreshing the html page and manually scroll to
+the bottom of a test output. This can obviously be easily automated thanks adding <code>title</code> attributes
+everywhere relevant in the html pages but it is such a waste of time and resources (since the user will keep
+loading the full page every time).</p>
+<p>One solution to that would be for the web server to provide websocket endpoints which would stream the data
+received from a worker. There might also be some other technical possibilities based on database triggers.</p>
+<h2 id="database-available-on-the-network"><a class="header" href="#database-available-on-the-network">Database available on the network</a></h2>
+<p>One of the first things on the todo list would be to move from <code>sqlite</code> to <code>postgres</code> for the database.  The
+benefits are multiple here.</p>
+<p>For one, since <code>postgresql</code> can listen to requests on the network, workers could then directly issue requests
+against the database without having to go through a proxy layer implemented via special routes in the web
+server. This would simplify the project a bit and should slightly increase the performances as the proxy layer and
+its overhead would then vanish.</p>
+<p>Another benefit here would be the one of performances. The official <code>sqlite</code> web page lists the use cases for
+which <code>sqlite</code> is a good fit, and others which shows where it is not the best choice for the task. <code>mini_ci</code>
+falls on the later category unfortunately and there should be some performance to be gained by moving to
+<code>postgres</code>.</p>
+<p>Yet another benefit in terms of performance, is that extracting the data related to one single test of a
+specific build won't require anymore to retrieve the data of all tests of that build, create a webpage with
+everything, transfer all those data, only discard the data of all tests we are not interested in.</p>
+<p>The downside of this is that the database configuration would need to implement restricted user accounts for
+security purposes, in particular to ensure no one can simply wipe out the database.</p>
+<h2 id="running-tests-in-parallel"><a class="header" href="#running-tests-in-parallel">Running tests in parallel</a></h2>
+<p>At the moment, tests are executed sequentially. If more than one instance of a hardware is available, all of
+them could be used to execute separate tasks or tests concurrently. The worker would need to monitor all of
+them and ensure the output of separate tests or jobs do not get intertwined</p>
+<h2 id="desktop-application"><a class="header" href="#desktop-application">Desktop application</a></h2>
+<p>Having to use a web browser to load web pages and interact with the CI, either to post a job request or see
+the output of one is something I find inefficient. For one, it looked to me that loading a simple page takes
+50ms with Firefox which I can't control. I consider 50ms to be a long time to wait when interacting with
+computers. Bearable, sure, but not great. I'm not a web expert but the fact that firefox needs to load a page,
+to parse it, extract the structure, find out how to layout <code>div</code>, which css characteristics to use to draw the
+user interface, ... and do that at every page load is surely sub-optimal. The only thing that changes in the
+web pages of the CI is the content itself, not the interface. Therefore having a desktop application (either
+terminal or gui), where the user interface would be compiled and not interpreted every time would surely make
+for faster interactions, and lower memory usage too.</p>
+<p>On top of providing a faster user interface, a desktop application could also make use of the user's disk to
+cache data from the database, essentially having a local replica, kept in sync with the CI's one.  That way,
+when loading data, the app would load everything from its local copy and displays it immediately, instead of
+issueing a network request and have to wait for the output before presenting it to the user. Some work would
+be required to ensure cache coherency here. For example the app could first look into its cache and display
+the data, while also issuing a network request concurrently to see if something changed. If something did
+change, then the app would redraw the screen with the latest data. This would make for a nicer user interface
+as it means faster interactions.</p>
+<h2 id="increased-performance-of-the-workers"><a class="header" href="#increased-performance-of-the-workers">Increased performance of the workers</a></h2>
+<p>At the moment, the code of the workers is kept quite simple, and while they push data to the database (through
+the webserver) and wait for a reply confirming everything went well, they do not do anything. Therefore the
+worker end up adding some delay when starting a new test because it waits for a confirmation related to a former
+test.</p>
+<h2 id="running-cmake-and-tests-in-a-virtual-machine"><a class="header" href="#running-cmake-and-tests-in-a-virtual-machine">Running cmake and tests in a virtual machine</a></h2>
+<p>This would be about fixing the huge security issue of remote code execution described on the <code>security</code> page.</p>
+<p>Simply put, the workers would start a virtual machine in which they would execute the "cmake generation" steps as
+well as executing scripts (e.g. the ones handling tests) provided in the tested project.</p>
+<p>From a user point of view, it doesn't bring any user-facing feature though.</p>
+<h2 id="caching-html-pages-once-tasks-are-finished"><a class="header" href="#caching-html-pages-once-tasks-are-finished">Caching html pages once tasks are finished</a></h2>
+<p>Once a job is finished, its data is fixed, and therefore loading the page related to said job should always return
+the exact same html page. This is a perfect case for caching. When the web server is told a job finished, it could
+then create the html page once and save it to a cache. A request for that page later on can be processed
+significantly faster that point.</p>
+<h2 id="https"><a class="header" href="#https">HTTPS</a></h2>
+<p>Enabling encrypted communications is quite high in the list of important things to do for security reasons.</p>
+<h2 id="email-notification"><a class="header" href="#email-notification">Email notification</a></h2>
+<p>Having to check every now and then to see the status of a job is tedious. Of course this can be easily
+automated thanks to the work put into providing html page with <code>title</code> everywhere necessary, but it would
+be nicer to not even have to think about it. Instead of monitoring a job status, a user could receive
+automatically receive an email with the job's result as soon as it becomes available.</p>
+<ul>
+<li>
+<p>desktop (terminal) application to push test request / view output</p>
+</li>
+<li>
+<p>websocket to provide live output</p>
+</li>
+<li>
+<p>with desktop app, cache database locally to view output of finished
+tests without doing a network request</p>
+</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="performance_assessment.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="performance_assessment.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

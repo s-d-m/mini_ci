@@ -1,0 +1,68 @@
+# Implementation of the CI web server
+
+## Database choice
+
+One of the goal of the project was to remain as simple to tweak as possible. Another goal is
+performance. These two are often at odds. Most of the time I favoured keeping things simple and easy to
+maintain over achieving extra performance. At least for a first shot.
+
+For the database I went for `sqlite` for the reason of simplicity. It doesn't require user
+accounts. Everything is in a single file making it also trivial to backup shall the need arise.  Admittedly,
+`sqlite` is not the best choice here from a performance point of view, and as per `sqlite`'s authors own
+statement, my use case is not one for which `sqlite` is a good fit. Still, simplicity trumped performances in
+my case, ... for now.
+
+If I would have to chose another database, it would have been `postgresql` since it is well-maintained and has
+lots of documentation. Otherwise, the option of creating my own data structures and serialising/deserialing
+them to/from disk would also have been an option, but that would have gone against the goal of keeping things
+easy to tweak.
+
+One unfortunate consequence of using `sqlite` though is that it isn't accessible from the
+network. Consequently the webserver provides some endpoints whose sole purposes is to act as a proxy to the
+database. This is how for example workers end up updating the database with the test execution output: through
+a POST method to the web server.
+
+## Language choice
+
+For the choice of the programming language, the main criteria was performance in terms of execution speed.
+Memory consumption isn't as much of a concern, but due to CPU caches and TLB misses, there is also a high
+correlation between lower memory usage and increased performance. On top of that, execution time need to be
+reproducible to avoid issues of intermittent high latency waved away as being "just a fluke", "just a one-time
+thing" instead of getting analysed.  This means that languages relying on a garbage collector are
+out-of-question.
+
+In the end, the choice was between `assembly`, `C`, `C++`, and `Rust`. I didn't consider `Zig` at the time but
+it seems to fit the performance criteria like the others. I ended up picking `Rust` since it seems to be easiest
+to maintain in the long term than the alternatives.
+
+## Web server choice
+
+For the web server, once the language was decided, the main criteria was performance, especially latency.
+Throughput itself was actually given a very low position as a decision criteria as I wasn't expecting for even
+10 req/s. The second criteria was to know if the webserver was wel documented, easy to use, well-maintained
+with a big team behind it. This was important to avoid betting on a project with a very low bus factor with a
+risk of being abandonned while I'm using it.
+
+The choice was between `axum`, `actix-web` and `rocket`. `Rocket` had my favour as it looked to be the easiest
+toe use but it also had a very low bus factor at the time I made my decision. I deemed it too risky a
+choice. Between `axum` and `actix-web`, I decided to go for `axum` as it looked to be the safest choice in
+term of maintainance in the future and seemed to score better in latencies benchmarks.
+
+
+
+
+# Implementation of the workers
+
+## Language choice
+
+There are no technical reasons to force the same technologies on the web server side as in the workers, however
+`rust` fits the constraints of both, therefore there is also no reason to use two different programming
+languages here either. For simplicity reason, `rust` stayed.
+
+## Design
+
+The tasks a worker can execute depend on the configuration of the machine itself. For example, if a static
+analyser isn't installed on one machine, the worker executing on that machine can't obvioulsy perform the
+task of running the static analyser on the developer's code.
+
+Therefore the workers need to know which tasks

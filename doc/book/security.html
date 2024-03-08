@@ -1,0 +1,308 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Self security assessment - mini_ci</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">Introduction</a></li><li class="chapter-item expanded affix "><a href="constraints.html">Constraints of the project</a></li><li class="chapter-item expanded affix "><a href="architecture.html">Architecture</a></li><li class="chapter-item expanded affix "><a href="implementation_of_the_web_server.html">Implementation of the web server</a></li><li class="chapter-item expanded affix "><a href="implementation_of_the_workers.html">Implementation of the workers</a></li><li class="chapter-item expanded affix "><a href="security.html" class="active">Self security assessment</a></li><li class="chapter-item expanded affix "><a href="performance_assessment.html">Performance self assessment</a></li><li class="chapter-item expanded affix "><a href="future_work.html">Future work</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">mini_ci</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="security-self-assessment"><a class="header" href="#security-self-assessment">Security self assessment</a></h1>
+<p>Before talking about security, one needs to define a threat model and risk assessment. In my case, the threat
+model is quite simple: this is a toy project meant to be used only for myself on a private environment and not
+publicly accessible to anyone outside of my private network. Therefore most security protection are
+unnecessary here. Nevertheless, below is a list of identified security issues and the mitigations (or lack of)
+in place in the project.</p>
+<h2 id="-prevention-against-sql-injection"><a class="header" href="#-prevention-against-sql-injection">✅ Prevention against SQL injection</a></h2>
+<p>The webserver receives external user-controlled inputs which ends up being used to craft <code>SQL</code> requests.
+<code>SQL</code> injections are a well-known class of security issues which at its root come from not separating
+parameters from the request itself and instead mixing them together through string concatenation.</p>
+<p>To prevent this class of issue, all <code>SQL</code> requests are made through <code>sqlx</code>, a <code>rust</code> library managing
+databases connections, and use the feature of providing arguments separately from the request itself.</p>
+<h2 id="-html-escape-everywhere-hopefully"><a class="header" href="#-html-escape-everywhere-hopefully">✅ HTML escape everywhere (hopefully)</a></h2>
+<p>The "build detail" web page contains data that is produced by external applications, ultimately controlled
+by the user. For example, the output of a test is given by the worker and saved in the database. A malicious
+user could thus try to inject malicious code that would be interpreted by the web browser when loading a
+page.</p>
+<p>I'm unfortunately not aware of a method equivalent to the <code>SQL</code> injection prevention described above for
+<code>HTML</code>. Instead of having separated <code>HTML</code> "layout" and "content" which would prevent this class of issue
+completely, the user controlled inputs is first escaped, and then added to the <code>HTML</code> "layout" part.</p>
+<p>All places where data might come from the databse has been manually checked to ensure it goes through a
+a sanitisation function before getting added the the rest of the <code>HTML</code> page. However, all it takes is
+to miss one single place for the security to be defeated. In a spirit of defence in depth, other
+mechanisms are in place too.</p>
+<h2 id="-no-javascript-no-images-no-videos-no-sound-no-remote-fonts-no-external-css"><a class="header" href="#-no-javascript-no-images-no-videos-no-sound-no-remote-fonts-no-external-css">✅ No javascript, no images, no videos, no sound, no remote fonts, no external css</a></h2>
+<p>The website does not use javascript on any pages. Nor does it load external assets such as images, videos or
+remote fonts. Consequently, the <code>html</code> pages contain a very strict content security policy set to forbid
+loading such assets. This is done using <code>&lt;meta http-equiv="Content-Security-Policy" content="default-src 'none'"&gt;</code></p>
+<p>Therefore, if some user-controlled data were to be displayed without being sanitised, and tried to execute
+some javascript code, or load an external resource, it would be blocked by the browser. This is valid for both
+inline javascript or other resource, as well as for loading external assets.</p>
+<p>Regarding the <code>CSS</code>, the webpage embed all the <code>CSS</code> it uses in the <code>HTML</code> header part, and the content security
+policy is set to only allow that specific <code>CSS</code> which is verified by a hash.</p>
+<p>Consequently, all security issues related to external sources loading or using assets should be prevented.</p>
+<h2 id="-no-https"><a class="header" href="#-no-https">❌ NO HTTPS</a></h2>
+<p>At the time of writing, the webserver only serves pages via unsecured channels. Since the website does not
+contain private data, and everything is accessible to any user, this doesn't lead to an issue of the
+"information leak" type.</p>
+<p>However, since the communication channel is not encrypted, an attacker who could modify or inject packets
+in the network could therefore send a differnt page to the client and make him load that one instead.</p>
+<p>This is certainly a big issue for a public-facing website. In this case, since the <code>mini_ci</code> is only
+meant to be used by myself, for my own needs only, at home, I'm personally not concerned about this.
+Technically I'm not concerned about any other potential security issue for that same reason though.</p>
+<p>Obviously, for any more serious usage than just at-home toy project, <code>https</code> should be enabled and even
+enforced with <code>HSTS</code></p>
+<h2 id="-denial-of-service"><a class="header" href="#-denial-of-service">❌ Denial of service</a></h2>
+<p>The CI server doesn't try to be resilient to denial of service attacks. It doesn't implement any "API
+throttling" or features similar to "fail2ban" when an IP address does too many requests too quickly.  This
+means it is trivial to render the CI server unusable. One simple way to do so is to keep posting job requests
+quickly. Workers execute job requests in the order they were posted. Therefore this attack would force a
+legitimate job request to wait for a loooong time before getting picked up.</p>
+<p>Another way of making the CI server useless is by using the API meant for workers. When idling, a worker will
+check if there are any pending task it can process. If so, it takes the task out of the pending list and starts
+working on it and writes the output to the database. A denial of attack could simply be done by using the API
+to keep requesting pending task and never actually executes them. This will make the tasks seen as "running"
+whereas nothing will be achieved.</p>
+<p>Yet another way to make the CI unusable, still using the worker's dedicated API, is to push data to the database,
+pretending it is related to a job being currently processed. This way the legitimate job's output will be completely
+scrambled and dwarved among a sea of garbage data. Preventing this issue can be done in a way similar to the
+anti-CSRF tokens. Implementing this security is at odd with the "simple and easily tweakable" goals.</p>
+<h2 id="-remote-code-execution"><a class="header" href="#-remote-code-execution">❌ Remote code execution</a></h2>
+<p>The point of a CI is to execute cute coming from a different place: the tests of the actual project to
+run. This includes running code when compiling since the project uses CMake which let's users execute
+arbitrary code at the "cmake generation" step. On top of that, tests can often execute script for legitimate
+reasons, which also means there can be arbitrary code execution at the "run test" step.</p>
+<p>Since one goal of the project was to remain simple and tweakable on one side, and used only by myself on
+another side, I didn't spend any time implementing a sandbox mechanism for all the code executed by the
+project to test itself. Instead, the cmake generation step, and the test execution tests are executed directly
+on the same environment as the CI itself. This means there is a huge security issue trivial to use. However,
+since I'm the only one who can use this CI on my personal network, and also the only one who controls the
+tested project, no one can get gain access they didn't already have to anything.</p>
+<h2 id="-compliance-with-gdpr"><a class="header" href="#-compliance-with-gdpr">✅ Compliance with GDPR</a></h2>
+<p>The website do not share data any data with any third party, nor does it uses any cookie. Consequently, there
+is no need to show a banner asking for the user about its preferences about usage of its personal information.</p>
+<p>On top of that, no personally identifiable information is saved anywhere. Not even ip addresses or user agents
+are logged.</p>
+<p>Consequently, the website complies with GDPR rules.</p>
+<h2 id="-supply-chain-attack"><a class="header" href="#-supply-chain-attack">❌ Supply chain attack</a></h2>
+<p><code>mini_ci</code> makes use of external <code>rust</code> crates which were selected based on reputation. Said dependencies also
+have depdencies themselves. I didn't take the time to thoroughly review and vet all the external code I'm using.
+This is surely a case for unwarranted trust and certainly is a risk.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="implementation_of_the_workers.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="performance_assessment.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="implementation_of_the_workers.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="performance_assessment.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

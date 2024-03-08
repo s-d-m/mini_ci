@@ -1,0 +1,120 @@
+# Introduction
+
+This project is a mini continuous integration system tailored to my own specific needs. If it also fits yours,
+or you want to develop your own and take some inspiration from this, feel free to do so.
+
+I developed this system since I wanted a CI system fitting the following requirements:
+
+1. as simple to use as possible.
+1. simple to tweak
+1. with fast interactions
+1. can run tests on embedded devices attached to a PC
+1. extracting specific data should simple
+1. automating tasks should be simple
+1. possibility to follow the progression of a test execution live
+
+All the systems out there were I looked at were failing at least one criteria. This is not to say they are
+bad, only that I wasn't willing to compromise here and decided to rather roll my own for my specific needs.
+
+Pretty much all features which can be expected from a professional CI service are not to be found here. This
+is simply because I don't need them. For example, there are no user accounts, no per-user permissions, no
+email notifications when a build fails, no button to cancel or retry a build, no automatic reload of the html
+page to display the latest job status.
+
+The features it actually provides are rather basic:
+
+1. a user can post a job request and specify a few parameters:
+    - the git commit id to use
+    - the tests to runs
+    - if the tests should be executed on real hardware, qemu or both
+    - ensuring the code follow the formatting rules
+    - ensuring the code follow the linters rules
+1. tasks are executed and the output saved in a database
+1. a task output can be retrieved and viewed
+
+
+
+# Self-imposed constraints
+
+## Simple to use
+
+Below are screenshots of the UI to give an idea of how it looks:
+
+The main page:
+
+![The main page](./main_page.png)
+
+The page to add a new job:
+
+![Add job](./add_job.png)
+
+Build details page:
+
+![Build detail example](./build_details_example.png)
+
+You can decide by yourself if everything looks clear or not.
+
+## simple to tweak
+
+The
+choice of `sqlite` as the database was mostly decided by that. There is no need to manage database user
+accounts for example. Everything is in a single file making it also easy to backup shall the need arise.
+Admittedtly, `sqlite` is not the best choice here from a performance point of view, and as per `sqlite`'s
+authors statement, my use case is not one for which `sqlite` is a good fit and they recommend to use something
+else instead. Still, simplicity trumped performances in my case, ... for now.
+
+## Fast interactions
+
+From a programming language, having a focus on performance meant the choice
+were reduced to assembly, Ada, C, C++ and Rust. Admittedly I didn't consider Zig.
+
+When choosing a web framework, one of the decision criteria was the latency. Throughput was actually very low
+as a decision criteria as I wasn't expecting for even 10 req/s.
+
+In the end when started to measure performance (in a non-scientific way), the numbers I was getting was mostly below 10ms
+for the webserver to complete a request. The rest of the latency (i.e. firefox's loading time and network travel time) is
+not something on my control. Only updating a task was taking about 100ms and that isn't as much as a deal since it is
+done by a worker program, not a human.
+
+At that point, I'm satisfied enough with the performances, even though I have some ideas to make interaction faster.
+
+## Esily extract data
+
+
+One
+way would be to simply query an SQL request against the database, but since the choice was made to use
+`sqlite`, the database doesn't process network request. Instead, each of the cells on the html containing
+interesting data are selectable with a CSS path. To extract the CSS path of a specific element, for example
+the status of the `ubsan_test`, compile with gcc 12, executed on qemu, a user would:
+
+1. open the build page on firefox
+2. open the developer tool
+3. select that element
+4. right click
+5. click "copy >> CSS Path"
+
+Then to programmatically retrieve the status of the ubsan test of any build, a developer would only need to
+execute the following command:
+```sh
+wget -q -O - 'http://address_of_ci_server/buils/<a_build_id>' | htmlq --text '<the css path copied from firefox with only a slight manual tweak>'
+```
+
+The CSS path would have to be slightly manually tweak since the one Firefox returns isn't specifying
+enough. For the given example, Firefox would return `html body div.Failed table tbody tr td.Failed details
+summary`. The two `.Failed` here would need to be removed, and a few elements need to be enhanced with the
+correct title. The correct CSS path is: `html body div[title="Tests_gcc_12"] table tbody
+tr[title="ubsan_test"] td[title="Qemu"] details summary` The title's value can be found in the html tag. Once
+the correct path is extracted, a developer can reuse that same command, only changing the build id. Getting
+the logs of the test instead of the status can be done the same way. Same for any other test.
+
+## can run tests on embedded devices attached to a PC
+
+This is the main use case I had for this CI. If
+
+# Technical choices
+
+
+
+## Automating tasks
+
+# Features

@@ -1,0 +1,282 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Performance self assessment - mini_ci</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">Introduction</a></li><li class="chapter-item expanded affix "><a href="constraints.html">Constraints of the project</a></li><li class="chapter-item expanded affix "><a href="architecture.html">Architecture</a></li><li class="chapter-item expanded affix "><a href="implementation_of_the_web_server.html">Implementation of the web server</a></li><li class="chapter-item expanded affix "><a href="implementation_of_the_workers.html">Implementation of the workers</a></li><li class="chapter-item expanded affix "><a href="security.html">Self security assessment</a></li><li class="chapter-item expanded affix "><a href="performance_assessment.html" class="active">Performance self assessment</a></li><li class="chapter-item expanded affix "><a href="future_work.html">Future work</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">mini_ci</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="performance-self-assessment"><a class="header" href="#performance-self-assessment">Performance self assessment</a></h1>
+<p>In the end, when I started to measure performance (in a non-scientific way), the numbers I was getting to interact with the webserver
+were mostly below 15ms. Unfortunately when looking at the Firefox console I've seen loading time go as high as 100ms (stays mostly on 50-60ms range).
+Most of the latency, (Firefox's loading time, network travel time, TCP handshakes etc...) is not something under my control.</p>
+<p>At that point, I'm satisfied enough with the performances of the web server per se. I wont pursue the goal of
+increased performances any further (even though I have some ideas).</p>
+<p>Below are the benchmarks I did. Those were conducted on a commodity hardware, specifically a DELL Latitude
+5501 laptop. These benchmarks were executed on a linux virtual machine running under WSL2 in Microsoft Windows
+10.</p>
+<h2 id="how-long-does-it-take-to-retrieve-the-main-page"><a class="header" href="#how-long-does-it-take-to-retrieve-the-main-page">How long does it take to retrieve the main page?</a></h2>
+<p>To check the time it takes to retrieve the main page, the benchmark used was simply to compute the wall clock time
+of running <code>wget</code> to dowload the main page.</p>
+<pre>
+<code class="language-shell hljs">shell> hyperfine "wget -q -O - 'http://localhost:3000/'"
+Benchmark 1: wget -q -O - 'http://localhost:3000/'
+  Time (<span style="color: green;">mean</span> ± <span style="color: #009718;">σ</span>):       <span style="color: green;font-weight: bold;">2.4 ms</span> ±   <span style="color: green;font-weight: bold;">0.5</span> ms    [User: <span style="color: blue;">1.4 ms</span>, System: <span style="color: blue;">0.4 ms</span>]
+  Range (<span style="color: #2752d5;">min</span> … <span style="color: #b0147b;">max</span>):     <span style="color: #2752d5;">1.6 ms</span> …   <span style="color: #b0147b;">6.1 ms</span>    <span style="color: #7d7070;">663 runs</span>
+</code>
+</pre>
+<p>It is to be noted that thes timings include the time it takes to start <code>wget</code>, create the request, make the
+TCP handshake, post the request, receive the response, and report it.  The server's log showed lower times
+below one millisecond (reported at 0).</p>
+<h2 id="how-long-does-it-take-to-retrieve-the-data-of-a-specific-build"><a class="header" href="#how-long-does-it-take-to-retrieve-the-data-of-a-specific-build">How long does it take to retrieve the data of a specific build?</a></h2>
+<p>The benchmarks are done by simply measuring the time it takes to run a request via <code>wget</code>. This is the data for the time it takes
+to retrieve the data of a specific job:</p>
+<pre>
+<code class="language-shell hljs">shell> hyperfine "wget -q -O - 'http://localhost:3000/build/3'"
+Benchmark 1: wget -q -O - 'http://localhost:3000/build/3'
+  Time (<span style="color: green;">mean</span> ± <span style="color: #009718;">σ</span>):       <span style="color: green;font-weight: bold;">8.4 ms</span> ±   <span style="color: green;font-weight: bold;">0.4</span> ms    [User: <span style="color: blue;">1.5 ms</span>, System: <span style="color: blue;">0.4 ms</span>]
+  Range (<span style="color: #2752d5;">min</span> … <span style="color: #b0147b;">max</span>):     <span style="color: #2752d5;">7.5 ms</span> …   <span style="color: #b0147b;">11.2 ms</span>    <span style="color: #7d7070;">273 runs</span>
+</code>
+</pre>
+<h2 id="how-long-does-it-take-to-retrieve-the-load-the-page-to-enter-a-build-request"><a class="header" href="#how-long-does-it-take-to-retrieve-the-load-the-page-to-enter-a-build-request">How long does it take to retrieve the load the page to enter a build request?</a></h2>
+<p>The benchmarks are done by simply measuring the time it takes to run a request via <code>wget</code>. This is the data for the time it takes
+to retrieve the <code>add_job</code> page.</p>
+<pre>
+<code class="language-shell hljs">shell> hyperfine "wget -q -O - 'http://localhost:3000/add_job'"
+Benchmark 1: wget -q -O - 'http://localhost:3000/add_job'
+  Time (<span style="color: green;">mean</span> ± <span style="color: #009718;">σ</span>):       <span style="color: green;font-weight: bold;">1.8 ms</span> ±   <span style="color: green;font-weight: bold;">0.4</span> ms    [User: <span style="color: blue;">1.4 ms</span>, System: <span style="color: blue;">0.3 ms</span>]
+  Range (<span style="color: #2752d5;">min</span> … <span style="color: #b0147b;">max</span>):     <span style="color: #2752d5;">1.3 ms</span> …   <span style="color: #b0147b;">4.7 ms</span>    <span style="color: #7d7070;">803 runs</span>
+</code>
+</pre>
+<h2 id="how-long-does-it-take-to-post-a-job"><a class="header" href="#how-long-does-it-take-to-post-a-job">How long does it take to post a job?</a></h2>
+<p>The benchmarks are done by simply measuring the time it takes to run a request via <code>curl</code>. This is the data for the time it takes
+to add a job:</p>
+<pre>
+<code class="language-shell hljs">shell> hyperfine "curl 'http://localhost:3000/add_job' --compressed -X POST --data-raw '&lt;all the parameters of the add_job method&gt;' "
+Benchmark 1: curl 'http://localhost:3000/add_job' --compressed -X POST --data-raw '&lt;all the parameters of the add_job method&gt;'
+  Time (<span style="color: green;">mean</span> ± <span style="color: #009718;">σ</span>):       <span style="color: green;font-weight: bold;">15.6 ms</span> ±   <span style="color: green;font-weight: bold;">2.5</span> ms    [User: <span style="color: blue;">3.3 ms</span>, System: <span style="color: blue;">1.3 ms</span>]
+  Range (<span style="color: #2752d5;">min</span> … <span style="color: #b0147b;">max</span>):     <span style="color: #2752d5;">12.8 ms</span> …   <span style="color: #b0147b;">28.5 ms</span>    <span style="color: #7d7070;">199 runs</span>
+</code>
+</pre>
+<p>It is to be noted that thes timings include the time it takes to start <code>curl</code>, create the request, make the
+TCP handshake, post the request, receive the response, and report it.  The timings reported from the server's
+log were consistently around 9 to 11 milliseconds with peaks at 13 milliseconds.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="security.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="future_work.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="security.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="future_work.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
