@@ -17,4 +17,4 @@ All the systems out there were I looked at were failing at least one criteria. T
 bad, only that I wasn't willing to compromise here and decided to rather roll my own for my specific needs.
 
 More documentation about the project itself, for example the design choices, the security self-assessment or
-the performance assessment is available at [https://s-d-m.github.io/mini_ci/](https://s-d-m.github.io/mini_ci/)
+the performance assessment is available at [https://s-d-m.codeberg.page/mini_ci/](https://s-d-m.codeberg.page/mini_ci/)
