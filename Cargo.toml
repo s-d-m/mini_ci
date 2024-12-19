@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 # for mini_ci
-axum = "0.7.3"
+axum = "0.8.0-rc.1"
 tokio = { version = "1.35.1", features = ["full"] }
 tower = "0.4.13"
 tower-http = { version = "0.5.0", features = [ "compression-full", "trace" ] }

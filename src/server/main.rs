@@ -58,9 +58,9 @@ async fn main() {
     // build our application with a single route
     let app = Router::new()
         .route("/", get(list_job_queue::list_job_queue))
-        .route("/list_max_id/:max_id", get(list_job_queue::list_job_queue_with_max_id))
-        .route("/list_min_id/:min_id", get(list_job_queue::list_job_queue_with_min_id))
-        .route("/build/:id", get(get_build_details::get_build_details))
+        .route("/list_max_id/{max_id}", get(list_job_queue::list_job_queue_with_max_id))
+        .route("/list_min_id/{min_id}", get(list_job_queue::list_job_queue_with_min_id))
+        .route("/build/{id}", get(get_build_details::get_build_details))
         .route("/add_job", get(add_job))
         .route("/request_task", post(request_task::request_task))
         .route("/update_task", post(update_task::update_task))
